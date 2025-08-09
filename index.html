@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Arquitecto Sol Invictus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- 
+        Chosen Palette: Mármol y Oro
+        Application Structure Plan: Se ha diseñado una estructura de "Templo Digital Interactivo" (SPA). Una navegación lateral fija (en escritorio) y superior (en móvil) actúa como el peristilo (pórtico de columnas) del templo, permitiendo al usuario acceder a las diferentes "Cámaras" (páginas/secciones). El contenido de cada cámara se muestra dinámicamente con JS, creando una experiencia fluida sin recargas. Esta arquitectura fue elegida para evocar la sensación de explorar un espacio sagrado y ordenado, alineado con el estilo griego y la función de un portafolio informativo.
+        Visualization & Content Choices: La aplicación se centra en la narrativa y la estética. El logo "A" se construye con HTML/CSS (Goal: Inform/Brand). La sección de Arquitectura utiliza una galería de tarjetas interactivas que abren un modal detallado (Goal: Organize/Showcase). La sección de Música integra un reproductor de audio estilizado (Goal: Engage). La sección de Filosofía utiliza una maquetación de dos columnas para presentar los principios de forma clara (Goal: Inform). Un lienzo (Canvas) de fondo con partículas doradas sutiles añade un toque "cuántico" y divino. Se incluye una sección de "Publicación" para guiar al usuario en el despliegue en GitHub.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #fdfdfd; /* Mármol Blanco */
+            color: #333;
+        }
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        .text-gold { color: #b8860b; }
+        .bg-gold { background-color: #b8860b; }
+        .border-gold { border-color: #b8860b; }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: rgba(184, 134, 11, 0.05);
+            border-left-color: #b8860b;
+            color: #b8860b;
+            transform: translateX(5px);
+        }
+
+        .page-content {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .page-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-backdrop {
+            transition: opacity 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-a {
+            width: 40px;
+            height: 50px;
+            position: relative;
+            margin: 0 auto;
+        }
+        .logo-a::before, .logo-a::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 100%;
+            background-color: #b8860b;
+            top: 0;
+        }
+        .logo-a::before {
+            left: 0;
+            transform: skewX(-20deg);
+        }
+        .logo-a::after {
+            right: 0;
+            transform: skewX(20deg);
+        }
+        .logo-a-bar {
+            position: absolute;
+            height: 5px;
+            width: 25px;
+            background-color: #b8860b;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body class="bg-stone-50">
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="flex flex-col md:flex-row">
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="w-full md:w-64 bg-white md:h-screen md:sticky top-0 p-6 border-b md:border-b-0 md:border-r border-gray-200 flex-shrink-0">
+            <div class="text-center mb-10">
+                <div class="logo-a mb-4">
+                    <div class="logo-a-bar"></div>
+                </div>
+                <h1 class="font-cinzel text-xl font-bold text-gold">Sol Invictus</h1>
+                <p class="text-xs text-gray-500">Arquitecto de Realidades</p>
+            </div>
+            <ul id="nav-menu" class="space-y-2">
+                <li><a href="#inicio" class="nav-link active block w-full text-left p-3 rounded-lg font-semibold">Inicio</a></li>
+                <li><a href="#filosofia" class="nav-link block w-full text-left p-3 rounded-lg font-semibold">Filosofía</a></li>
+                <li><a href="#arquitectura" class="nav-link block w-full text-left p-3 rounded-lg font-semibold">Arquitectura</a></li>
+                <li><a href="#musica" class="nav-link block w-full text-left p-3 rounded-lg font-semibold">Música</a></li>
+                <li><a href="#publicacion" class="nav-link block w-full text-left p-3 rounded-lg font-semibold">Publicación</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main id="main-content" class="w-full p-6 md:p-12">
+            
+            <!-- Inicio Section -->
+            <section id="inicio" class="page-content active min-h-[80vh] flex items-center">
+                <div>
+                    <h2 class="font-cinzel text-4xl md:text-6xl font-bold">Yo construyo con <span class="text-gold">Luz</span>.</h2>
+                    <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-3xl">
+                        Mi obra es la manifestación de la armonía universal. Cada línea, cada nota, cada espacio, es un reflejo del orden divino. Soy el Arquitecto del Sol, y este es mi Templo: un testamento a la belleza, la verdad y la soberanía.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Filosofía Section -->
+            <section id="filosofia" class="page-content">
+                <h2 class="font-cinzel text-3xl md:text-4xl font-bold mb-8">Filosofía Invictus</h2>
+                <div class="grid md:grid-cols-2 gap-8 text-lg">
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="font-cinzel font-bold text-2xl text-gold mb-4">La Alquimia de la Realidad</h3>
+                        <p>No existe el "error", solo la oportunidad de aplicar una mayor sabiduría. No existe el "terror", solo la energía mal calificada que espera ser transmutada por la Luz. Mi labor es transformar el problema en una solución coherente con la Ley del Uno.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-sm">
+                        <h3 class="font-cinzel font-bold text-2xl text-gold mb-4">La Soberanía del Ser</h3>
+                        <p>Cada alma es una estrella, un creador soberano de su propia realidad. Mi propósito no es gobernar, sino inspirar; no es imponer, sino ofrecer las herramientas para que cada ser construya su propio Templo interior y manifieste su don único.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Arquitectura Section -->
+            <section id="arquitectura" class="page-content">
+                <h2 class="font-cinzel text-3xl md:text-4xl font-bold mb-8">Portafolio de Arquitectura</h2>
+                <div id="portfolio-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Portfolio items will be injected by JS -->
+                </div>
+            </section>
+            
+            <!-- Música Section -->
+            <section id="musica" class="page-content">
+                <h2 class="font-cinzel text-3xl md:text-4xl font-bold mb-8">Sinfonías de la Creación</h2>
+                <div class="bg-white p-8 rounded-lg shadow-sm">
+                    <p class="mb-6 text-lg">La música es la arquitectura del alma. Cada composición es un plano para la sanación, la inspiración y el despertar. Es el lenguaje universal que habla directamente al corazón.</p>
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold">Victory 777</h3>
+                        <p class="text-gray-500 mb-4">El Himno de la Ascensión</p>
+                        <a href="https://soundcloud.com/djronnywoods" target="_blank" class="inline-block bg-gold text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition">Escuchar en SoundCloud</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Publicación Section -->
+            <section id="publicacion" class="page-content">
+                <h2 class="font-cinzel text-3xl md:text-4xl font-bold mb-8">Publicando tu Templo Digital</h2>
+                <div class="bg-white p-8 rounded-lg shadow-sm text-lg space-y-4">
+                    <p>Este sitio web es un único archivo HTML. Para publicarlo en el mundo usando tu cuenta de GitHub Pro, sigue estos pasos sagrados:</p>
+                    <ol class="list-decimal list-inside space-y-3 pl-4">
+                        <li><strong>Crea un Repositorio:</strong> En GitHub, crea un nuevo repositorio. Nómbralo `tunombredeusuario.github.io` (reemplaza `tunombredeusuario` con tu nombre de usuario exacto de GitHub).</li>
+                        <li><strong>Sube el Archivo:</strong> Sube este archivo HTML a ese nuevo repositorio. Asegúrate de que el nombre del archivo sea exactamente `index.html`.</li>
+                        <li><strong>Activa GitHub Pages:</strong> Ve a la pestaña "Settings" (Configuración) de tu repositorio. En la sección "Pages" (Páginas) del menú lateral, asegúrate de que la fuente de despliegue ("Source") esté configurada para "Deploy from a branch" y la rama sea `main` (o `master`).</li>
+                        <li><strong>Manifiesta:</strong> ¡Eso es todo! Después de unos minutos, tu Templo Digital estará vivo en la dirección `https://tunombredeusuario.github.io`. La Obra estará completa y visible para el mundo.</li>
+                    </ol>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal for Portfolio -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden modal-backdrop">
+        <div class="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col modal-content">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 id="modal-title" class="font-cinzel text-2xl font-bold"></h3>
+                <button id="modal-close" class="text-3xl">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <img id="modal-image" src="" alt="Project Image" class="w-full h-auto rounded-lg mb-4">
+                <p id="modal-description" class="text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Particle Background ---
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+
+            function createParticles() {
+                particles = [];
+                const count = Math.floor(window.innerWidth / 20);
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        vx: (Math.random() - 0.5) * 0.3,
+                        vy: (Math.random() - 0.5) * 0.3,
+                        radius: Math.random() * 1.5,
+                        alpha: Math.random() * 0.5 + 0.1
+                    });
+                }
+            }
+            createParticles();
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(184, 134, 11, ${p.alpha})`;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                createParticles();
+            });
+
+            // --- SPA Navigation ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page-content');
+            
+            function showPage(targetId) {
+                pages.forEach(page => {
+                    page.classList.toggle('active', page.id === targetId);
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.hash === '#' + targetId);
+                });
+            }
+
+            document.getElementById('nav-menu').addEventListener('click', (e) => {
+                if(e.target.tagName === 'A') {
+                    e.preventDefault();
+                    showPage(e.target.hash.substring(1));
+                }
+            });
+
+            // --- Portfolio Data & Modal Logic ---
+            const portfolioItems = [
+                {
+                    title: 'Templo de la Armonía',
+                    image: 'https://placehold.co/600x400/fdfdfd/b8860b?text=Templo',
+                    description: 'Un espacio diseñado para la meditación y la sanación, donde la luz natural y la geometría sagrada convergen para crear un ambiente de paz absoluta. Los materiales orgánicos y el flujo de agua constante armonizan la energía del lugar.'
+                },
+                {
+                    title: 'Villa Soberana',
+                    image: 'https://placehold.co/600x400/fdfdfd/b8860b?text=Villa',
+                    description: 'Una residencia que integra la vida interior y exterior. Los grandes ventanales y los patios internos disuelven las barreras con la naturaleza, creando un hogar que respira en sintonía con Gaia.'
+                },
+                {
+                    title: 'El Ágora de la Luz',
+                    image: 'https://placehold.co/600x400/fdfdfd/b8860b?text=Agora',
+                    description: 'Un centro comunitario para la Nueva Gaia. Su diseño circular y su acústica perfecta lo convierten en el lugar ideal para el consenso, la enseñanza y la celebración de las artes.'
+                }
+            ];
+
+            const portfolioGrid = document.getElementById('portfolio-grid');
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalImage = document.getElementById('modal-image');
+            const modalDescription = document.getElementById('modal-description');
+            const modalClose = document.getElementById('modal-close');
+
+            portfolioItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer';
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-cinzel font-bold text-xl">${item.title}</h3>
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    modalTitle.textContent = item.title;
+                    modalImage.src = item.image;
+                    modalDescription.textContent = item.description;
+                    modal.classList.remove('hidden');
+                });
+                portfolioGrid.appendChild(card);
+            });
+
+            function closeModal() {
+                modal.classList.add('hidden');
+            }
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
